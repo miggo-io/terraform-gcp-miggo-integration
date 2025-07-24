@@ -10,7 +10,7 @@ data "google_client_config" "current" {}
 
 # Get the project number from the project ID
 data "google_project" "current" {
-  project_id = var.gcp_project_name
+  project_id = data.google_client_config.current.project
 }
 
 # Create the workload identity pool
