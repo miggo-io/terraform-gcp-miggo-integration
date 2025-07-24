@@ -1,6 +1,9 @@
 locals {
     webhook_url = "https://api.miggo.io/integration/gcp"
     miggo_auth_url = "https://auth.miggo.io/v1/auth/accesskey/exchange"
+    miggo_descope_project_id = "P2UOKcx9hh7CfM2i72CflPnVowpH"
+    aws_role_name = "gcp-integration"
+    aws_account_id = "540030267408"
 }
 
 data "google_client_config" "current" {}
@@ -24,13 +27,13 @@ resource "google_iam_workload_identity_pool_provider" "miggo_workload_identity_p
   workload_identity_pool_provider_id = "miggo-workload-identity-provider"
 
   aws {
-    account_id = var.aws_account_id
+    account_id = local.aws_account_id
   }
 
   attribute_mapping = {
     "attribute.aws_role" = "assertion.arn.contains('assumed-role') ? assertion.arn.extract('{account_arn}assumed-role/') + 'assumed-role/' + assertion.arn.extract('assumed-role/{role_name}/') : assertion.arn"
     "google.subject"     = "assertion.arn"
-    "attribute.aws_user" = "assertion.arn.extract('assumed-role/${var.aws_role_name}/{user}')"
+    "attribute.aws_user" = "assertion.arn.extract('assumed-role/${local.aws_role_name}/{user}')"
   }
 }
 
@@ -82,7 +85,7 @@ resource "google_service_account_iam_binding" "readonly_workload_identity_bindin
   role               = "roles/iam.workloadIdentityUser"
 
   members = [
-    "principalSet://iam.googleapis.com/projects/${data.google_project.current.number}/locations/global/workloadIdentityPools/miggo-workload-identity-pool/attribute.aws_role/arn:aws:sts::${var.aws_account_id}:assumed-role/${var.aws_role_name}",
+    "principalSet://iam.googleapis.com/projects/${data.google_project.current.number}/locations/global/workloadIdentityPools/miggo-workload-identity-pool/attribute.aws_role/arn:aws:sts::${local.aws_account_id}:assumed-role/${local.aws_role_name}",
   ]
 }
 
@@ -90,7 +93,7 @@ resource "google_service_account_iam_binding" "readonly_workload_identity_token_
   service_account_id = google_service_account.miggo_service_account.id
   role               = "roles/iam.serviceAccountTokenCreator"
   members = [
-    "principalSet://iam.googleapis.com/projects/${data.google_project.current.number}/locations/global/workloadIdentityPools/miggo-workload-identity-pool/attribute.aws_role/arn:aws:sts::${var.aws_account_id}:assumed-role/${var.aws_role_name}",
+    "principalSet://iam.googleapis.com/projects/${data.google_project.current.number}/locations/global/workloadIdentityPools/miggo-workload-identity-pool/attribute.aws_role/arn:aws:sts::${local.aws_account_id}:assumed-role/${local.aws_role_name}",
   ]
 }
 
@@ -98,7 +101,7 @@ resource "google_service_account_iam_binding" "readonly_workload_identity_user" 
   service_account_id = google_service_account.miggo_service_account.id
   role               = "roles/iam.serviceAccountUser"
   members = [
-    "principalSet://iam.googleapis.com/projects/${data.google_project.current.number}/locations/global/workloadIdentityPools/miggo-workload-identity-pool/attribute.aws_role/arn:aws:sts::${var.aws_account_id}:assumed-role/${var.aws_role_name}",
+    "principalSet://iam.googleapis.com/projects/${data.google_project.current.number}/locations/global/workloadIdentityPools/miggo-workload-identity-pool/attribute.aws_role/arn:aws:sts::${local.aws_account_id}:assumed-role/${local.aws_role_name}",
   ]
 }
 
@@ -112,7 +115,7 @@ resource "null_resource" "integration_webhook" {
   provisioner "local-exec" {
     command = <<EOT
       TOKEN=$(curl -X POST ${local.miggo_auth_url} \
-      -H "Authorization: Bearer ${var.miggo_descope_project_id}:${var.access_token}" \
+      -H "Authorization: Bearer ${local.miggo_descope_project_id}:${var.access_token}" \
       -H "Accept: application/json" \
       -H "Content-Type: application/json" \
       | jq -r '.sessionJwt')
