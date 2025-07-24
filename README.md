@@ -11,9 +11,6 @@ module "miggo_integration" {
 
   gcp_project_name         = "your-gcp-project-name"
   access_token             = "your-miggo-access-token"
-  miggo_descope_project_id = "miggo-descope-project-id"
-  aws_account_id           = "miggo-aws-account-id"
-  aws_role_name            = "gcp-integration"
 }
 ```
 
