@@ -1,7 +1,7 @@
 locals {
     webhook_url = "https://api.miggo.io/integration/gcp"
     miggo_auth_url = "https://auth.miggo.io/v1/auth/accesskey/exchange"
-    miggo_descope_project_id = "P2UOKcx9hh7CfM2i72CflPnVowpH"
+    miggo_descope_project_id = "P2UjsJwOFdIeUAtW0pGTJ5SeJAlq"
     aws_role_name = "gcp-integration"
     aws_account_id = "540030267408"
 }
