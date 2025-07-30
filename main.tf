@@ -114,16 +114,15 @@ resource "null_resource" "integration_webhook" {
 
   provisioner "local-exec" {
     command = <<EOT
-      TOKEN=$(curl -X POST ${local.miggo_auth_url} \
+      /usr/bin/env sh -c 'TOKEN=$(curl -X POST ${local.miggo_auth_url} \
       -H "Authorization: Bearer ${local.miggo_descope_project_id}:${var.access_token}" \
       -H "Accept: application/json" \
       -H "Content-Type: application/json" \
-      | jq -r '.sessionJwt')
-
+      | jq -r ".sessionJwt") && \
       curl -X POST ${local.webhook_url} \
       -H "Authorization: Bearer $TOKEN" \
       -H "Content-Type: application/json" \
-      -d '{"GCPProjectNumber": "${data.google_project.current.number}"}'
+      -d '"'"'{"GCPProjectNumber": "${data.google_project.current.number}"}'"'"''
     EOT
   }
 
