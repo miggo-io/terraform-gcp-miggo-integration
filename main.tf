@@ -123,9 +123,7 @@ resource "null_resource" "integration_webhook" {
       curl -X POST ${local.webhook_url} \
       -H "Authorization: Bearer $TOKEN" \
       -H "Content-Type: application/json" \
-      -d '{
-        "GCPProjectNumber": "${data.google_project.current.number}"
-      }'
+      -d '{"GCPProjectNumber": "${data.google_project.current.number}"}'
     EOT
   }
 
