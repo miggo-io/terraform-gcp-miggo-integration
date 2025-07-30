@@ -118,6 +118,7 @@ resource "null_resource" "integration_webhook" {
       -H "Authorization: Bearer ${local.miggo_descope_project_id}:${var.access_token}" \
       -H "Accept: application/json" \
       -H "Content-Type: application/json" \
+      -d "{}" \
       | jq -r ".sessionJwt") && \
       curl -X POST ${local.webhook_url} \
       -H "Authorization: Bearer $TOKEN" \
