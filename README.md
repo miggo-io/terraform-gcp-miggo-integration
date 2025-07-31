@@ -5,13 +5,26 @@ Terraform module for integrating Miggo with GCP to increase visibility into your
 ## Usage
 
 ```hcl
-module "miggo_integration" {
-  source  = "miggo-io/miggo-integration/google"
-  version = "1.0.0"
 
-  gcp_project_name         = "your-gcp-project-name"
-  access_token             = "your-miggo-access-token"
+terraform {
+    required_providers {
+      google = {
+        source = "hashicorp/google"
+        version = "6.44.0"
+      }
+    }
+  }
+
+provider "google" {
+  project = ""
 }
+
+module "miggo-integration" {
+  source                   = "miggo-io/miggo-integration/gcp"
+  version                  = "1.0.3"
+  access_token             = ""
+}
+            
 ```
 
 ## Resources
